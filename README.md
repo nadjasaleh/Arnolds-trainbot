@@ -55,7 +55,7 @@ Deliverables:
 
 # 🗓 Day 1 – Core Build
 
-## ✅ Define Scope (1 hour)
+## ✅ Define Scope 
 User inputs:
 - Goal
 - Experience level
@@ -74,7 +74,7 @@ Bot outputs:
 ---
 
 ## ✅ Build Exercise Knowledge Base
-- 40–60 exercises
+- A couple of exercises
 - Categorized by muscle group, equipment, difficulty
 - Include safety notes & programming ranges
 
