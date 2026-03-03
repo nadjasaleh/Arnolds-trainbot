@@ -152,6 +152,8 @@ Book source: https://nnty.fun/downloads/books/TAEL/SELF%20IMPROVEMENT/FITNESS/BO
 
 Quotes: https://www.brainyquote.com/authors/arnold-schwarzenegger-quotes
 
+Gifs:  https://giphy.com/explore/arnold-schwarzenegger
+
 ### Stack
 
 Frontend: Streamlit
