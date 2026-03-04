@@ -1,0 +1,30 @@
+#arnold_quotes
+arnold_quotes = [
+
+    {"quote": "I don't just want to be a bodybuilder, I want to be a legend."},
+    {"quote": "The last three or four reps is what makes the muscle grow. This area of pain divides a champion from someone who is not a champion."},
+    {"quote": "For me, life is continuously being hungry. The meaning of life is not simply to exist, to survive, but to move ahead, to go up, to achieve, to conquer."},
+    {"quote": "You have to remember something: Everybody pities the weak; jealousy you have to earn."},
+    {"quote": "The resistance that you fight physically in the gym and the resistance that you fight in life can only build a strong character."},
+    {"quote": "What we face may look insurmountable. But I learned something from all those years of training and competing. I learned something from all those sets and reps when I didn’t think I could lift another ounce of weight. What I learned is that we are always stronger than we know."},
+    {"quote": "The worst thing I can be is the same as everybody else. I hate that."},
+    {"quote": "Strength does not come from winning. Your struggles develop your strengths."},
+    {"quote": "Failure is not an option. Everyone has to succeed."},
+    {"quote": "You can’t climb the ladder of success with your hands in your pockets."},
+    {"quote": "If you don’t find the time, if you don’t do the work, you don’t get the results."},
+    {"quote": "Trust yourself. Break some rules. Don’t be afraid to fail."},
+    {"quote": "The mind is the limit. As long as the mind can envision the fact that you can do something, you can do it."},
+    {"quote": "What is the point of being on this Earth if you are going to be like everyone else?"},
+    {"quote": "the resistance that you fight physically in the gym and the resistance that you fight in life can only build a strong character."},
+    {"quote": "For me, life is continuously being hungry."},
+    {"quote": "The last three or four reps is what makes the muscle grow."},
+    {"quote": "You have to remember something: Everybody pities the weak; jealousy you have to earn."},
+    {"quote": "No pain, no gain."},
+    {"quote": "Just remember, you can’t climb the ladder of success with your hands in your pockets."},
+    {"quote": "When you go through hardships and decide not to surrender, that is strength."},
+    {"quote": "The worst thing I can be is the same as everybody else."},
+    {"quote": "If you want to turn a vision into reality, you have to give 100% and never stop believing in your dream."},
+    {"quote": "I didn’t mind basic training. It taught me that something that seems impossible at the start can be achieved."},
+    {"quote": "To be successful, however, you must be brutal with yourself and focus on the flaws."},
+    {"quote": "You can scream at me, call me for dinner, but I’m not coming home until I finish my workout."}
+]
