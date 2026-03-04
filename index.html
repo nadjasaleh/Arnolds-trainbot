@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arnold Fitness Bot</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background-color: #f4f4f9; }
+        h2 { text-align: center; color: #333; }
+        #chat-box { height: 500px; border: 1px solid #ccc; padding: 15px; overflow-y: auto; margin-bottom: 15px; background: white; border-radius: 8px; }
+        .message { margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; line-height: 1.4; max-width: 80%; }
+        .user-msg { background: #007bff; color: white; margin-left: auto; text-align: left; }
+        .bot-msg { background: #e9ecef; color: black; margin-right: auto; text-align: left; }
+        
+        /* This ensures Arnold's GIFs don't break the chat box layout */
+        #chat-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+        
+        #input-container { display: flex; gap: 10px; }
+        #user-input { flex-grow: 1; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 12px 20px; font-size: 16px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+
+    <h2>Pump Iron with Arnold 🏋️‍♂️</h2>
+    
+    <div id="chat-box">
+        <div class="message bot-msg">Hello! I am Arnold. Ask me about fitness or the company policies!</div>
+    </div>
+    
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Ask a question..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const inputField = document.getElementById("user-input");
+            const chatBox = document.getElementById("chat-box");
+            const query = inputField.value.trim();
+
+            if (!query) return;
+
+            // 1. Show user message in UI
+            chatBox.innerHTML += `<div class="message user-msg">${query}</div>`;
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Show loading indicator
+            const loadingId = "loading-" + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="message bot-msg">Arnold is thinking...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // 3. Send request to Python backend
+                const response = await fetch("http://127.0.0.1:5000/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+                
+                // 4. Remove loading indicator
+                document.getElementById(loadingId).remove();
+                
+                // 5. Show Arnold's response parsed through Marked.js!
+                if (data.response) {
+                    chatBox.innerHTML += `<div class="message bot-msg">${marked.parse(data.response)}</div>`;
+                } else {
+                    chatBox.innerHTML += `<div class="message bot-msg" style="color:red;">Error: ${data.error}</div>`;
+                }
+                
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                chatBox.innerHTML += `<div class="message bot-msg" style="color:red;">Error connecting to backend. Is Python running?</div>`;
+            }
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Send message when Enter key is pressed
+        function handleKeyPress(event) {
+            if (event.key === "Enter") sendMessage();
+        }
+    </script>
+
+</body>
+</html>
