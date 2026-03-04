@@ -13,7 +13,7 @@ client = AzureOpenAI(
 )
 
 CHAT_MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT")
-if not CHAT_MODEL:
+if not CHAT_MODEL: 
     raise RuntimeError("AZURE_OPENAI_DEPLOYMENT missing (.env)")
 
 EMBED_MODEL = "text-embedding-ada-002"

@@ -1,0 +1,31 @@
+# Backup: curated requirements for ville-code (pinned from azure-env pip freeze)
+# Use: pip install -r requirements.txt
+
+# Azure & OpenAI
+openai==2.21.0
+azure-search-documents==11.6.0
+azure-cosmos==4.14.6
+
+# Environment
+python-dotenv==1.2.1
+
+# HTTP & images
+requests==2.32.5
+Pillow==12.1.1
+
+# ML / embeddings / metrics (knn.py, titanic.py, embedding.py, etc.)
+numpy==2.4.2
+pandas==3.0.0
+scikit-learn==1.8.0
+seaborn==0.13.2
+sentence-transformers==5.2.2
+
+# Tokenization & NLP
+tiktoken==0.12.0
+spacy==3.8.11
+
+# Agents SDK (for agent-sdk.py)
+openai-agents==0.9.0
+
+# Plotting (for embedding.py)
+matplotlib==3.10.8
