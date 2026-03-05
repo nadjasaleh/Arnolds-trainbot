@@ -143,19 +143,3 @@ Simple data flow diagram.
 1. Beginner muscle gain  
 2. Knee pain modification  
 3. Unsafe extreme request  
-
-# Notes
-
-### Data Sources
-
-Book source: https://nnty.fun/downloads/books/TAEL/SELF%20IMPROVEMENT/FITNESS/BODYBUILDING/The%20New%20Encyclopedia%20of%20Modern%20Bodybuilding%20-%20Simon%20%26%20Schuster.%20Arnold%20Schwarzenegger%2C%20Bill%20Dobbins%20%281998%29.pdf
-
-Quotes: https://www.brainyquote.com/authors/arnold-schwarzenegger-quotes
-
-Gifs:  https://giphy.com/explore/arnold-schwarzenegger
-
-### Stack
-
-Frontend: Streamlit
-
-Storage: Azure Cosmos DB for embedding vectors
