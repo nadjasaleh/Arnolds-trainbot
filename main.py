@@ -130,8 +130,18 @@ if __name__ == "__main__":
         )
 
         for chunk in stream:
-            delta = chunk.choices[0].delta
-            if delta and getattr(delta, "content", None):
-                print(delta.content, end="", flush=True)
+    # joissain eventeissä choices voi olla tyhjä tai puuttua
+            if not getattr(chunk, "choices", None):
+                continue
+            if len(chunk.choices) == 0:
+                continue
+
+            delta = chunk.choices[0].delta if chunk.choices[0] else None
+            if not delta:
+                continue
+
+            content = getattr(delta, "content", None)
+            if content:
+                print(content, end="", flush=True)
 
         print("\n")
