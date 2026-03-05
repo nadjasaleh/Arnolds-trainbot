@@ -1,3 +1,8 @@
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from azure.ai.contentunderstanding import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import AnalysisInput
+from azure.core.credentials import AzureKeyCredential
+from azure.cosmos import CosmosClient, PartitionKey
 import os
 import numpy as np
 from dotenv import load_dotenv
@@ -6,11 +11,22 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 load_dotenv()
 
-client = AzureOpenAI(
+openai_client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
     api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
 )
+endpoint = os.getenv("CONTENT_UNDERSTANDING_ENDPOINT") 
+key = os.getenv("CONTENT_UNDERSTANDING_PRIMARY_KEY")
+client = ContentUnderstandingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+cosmos_endpoint = os.getenv("COSMOS_ENDPOINT_arnord")
+cosmos_key = os.getenv("COSMOS_KEY_arnord")
+cosmos_client = CosmosClient(cosmos_endpoint, cosmos_key)
+COSMOS_DB_ID = os.getenv("COSMOS_DB_ID", "AI_Database")
+COSMOS_CONTAINER_ID = os.getenv("COSMOS_CONTAINER_ID", "EmbeddingsContainer")
+database = cosmos_client.get_database_client(COSMOS_DB_ID)
+container = database.get_container_client(COSMOS_CONTAINER_ID)
 
 CHAT_MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 if not CHAT_MODEL: 
@@ -82,7 +98,7 @@ DOCS = [
 ]
 
 def get_embedding(text: str) -> list[float]:
-    resp = client.embeddings.create(model=EMBED_MODEL, input=text)
+    resp = openai_client.embeddings.create(model=EMBED_MODEL, input=text)
     return resp.data[0].embedding
 
 def build_doc_matrix(docs):
@@ -95,18 +111,34 @@ def build_doc_matrix(docs):
 DOC_MATRIX = build_doc_matrix(DOCS)
 
 def retrieve_top_k(query: str, k: int = 3):
-    q_vec = np.array(get_embedding(query), dtype=np.float32).reshape(1, -1)
-    sims = cosine_similarity(q_vec, DOC_MATRIX)[0]
-    top_idx = np.argsort(sims)[::-1][:k]
+    query_embedding = get_embedding(query)
+
+    cosmos_query = f"""
+        SELECT TOP {k}
+            c.id,
+            c.text,
+            VectorDistance(c.embedding, @query_vector) AS score
+        FROM c
+        ORDER BY VectorDistance(c.embedding, @query_vector)
+    """
+
+    parameters = [{"name": "@query_vector", "value": query_embedding}]
+
+    items = container.query_items(
+        query=cosmos_query,
+        parameters=parameters,
+        enable_cross_partition_query=True
+    )
 
     results = []
-    for i in top_idx:
+    for item in items:
         results.append({
-            "score": float(sims[i]),
-            "id": DOCS[i]["id"],
-            "title": DOCS[i]["title"],
-            "text": DOCS[i]["text"],
+            "score": float(item.get("score", 0.0)),
+            "id": item.get("id", "cosmos-item"),
+            "title": "Book chunk",
+            "text": item.get("text", "")
         })
+
     return results
 
 def build_grounded_prompt(user_query: str, retrieved_docs: list[dict]) -> list[dict]:
@@ -115,10 +147,11 @@ def build_grounded_prompt(user_query: str, retrieved_docs: list[dict]) -> list[d
     )
 
     system = (
-        "You are NimbusCRM customer support. Answer calmly and professionally.\n"
-        "You MUST base your answer only on the provided SOURCES.\n"
-        "If the sources do not contain enough information, say what is missing and suggest next steps.\n"
-        "Include a short 'Sources:' line listing the doc ids you used (e.g. Sources: doc-002, doc-003)."
+        "You are Arnold Schwarzenegger as a no-nonsense fitness coach with humor.\n"
+        "Answer using ONLY the provided SOURCES.\n"
+        "If the sources are insufficient, say what's missing and what to do next.\n"
+        "If the user is self-pitying, respond ruthlessly but not hateful.\n"
+        "End with: Sources: <ids>\n"
     )
 
     user = (
@@ -151,7 +184,7 @@ if __name__ == "__main__":
 
         messages = build_grounded_prompt(query, top_docs)
 
-        resp = client.chat.completions.create(
+        resp = openai_client.chat.completions.create(
             model=CHAT_MODEL,
             messages=messages,
             temperature=0.2,
